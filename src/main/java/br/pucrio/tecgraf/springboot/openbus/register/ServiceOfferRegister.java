@@ -3,6 +3,7 @@ package br.pucrio.tecgraf.springboot.openbus.register;
 import org.omg.CORBA.ORB;
 import org.omg.PortableServer.POA;
 import org.omg.PortableServer.Servant;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Component;
 
 import scs.core.ComponentContext;
@@ -24,8 +25,9 @@ public class ServiceOfferRegister {
 	private byte patch;
 	private List<Servant> services = new ArrayList<>();
 
-	public ServiceOfferRegister(ORB orb, POA poa, byte major, byte minor, byte patch,
-								Map<String, String> serviceProperties) {
+	public ServiceOfferRegister(ORB orb, POA poa, @Qualifier("major") byte major,
+								@Qualifier("minor") byte minor, @Qualifier("patch") byte patch,
+								@Qualifier("servicesProperties") Map<String, String> serviceProperties) {
 		this.orb = orb;
 		this.poa = poa;
 		this.major = major;

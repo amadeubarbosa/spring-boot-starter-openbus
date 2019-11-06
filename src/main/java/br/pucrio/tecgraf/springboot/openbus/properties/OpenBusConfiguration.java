@@ -1,18 +1,18 @@
-package br.pucrio.tecgraf.springboot.openbus;
+package br.pucrio.tecgraf.springboot.openbus.properties;
 
 import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.stereotype.Component;
 import org.springframework.validation.annotation.Validated;
 
 import javax.validation.constraints.NotNull;
-import java.security.interfaces.RSAPrivateKey;
+import java.security.PrivateKey;
 import java.time.Duration;
 import java.time.temporal.ChronoUnit;
 
-@ConfigurationProperties("openbus")
-@Validated
 @Component
-public class OpenBusProperties {
+@Validated
+@ConfigurationProperties("openbus")
+public class OpenBusConfiguration {
 
     @NotNull(message = "Informe o endereço do openbus onde o serviço deverá ser registrado")
     private String address;
@@ -22,7 +22,7 @@ public class OpenBusProperties {
     private Integer port;
     private Duration retryInterval = Duration.of(6, ChronoUnit.SECONDS);
     @NotNull(message = "Informe a chave privada que dá acesso para que o serviço seja registrado no openbus")
-    private RSAPrivateKey privateKey;
+    private PrivateKey privateKey;
 
     public String getName() {
         return name;
@@ -56,11 +56,11 @@ public class OpenBusProperties {
         this.retryInterval = retryInterval;
     }
 
-    public RSAPrivateKey getPrivateKey() {
+    public PrivateKey getPrivateKey() {
         return privateKey;
     }
 
-    public void setPrivateKey(RSAPrivateKey privateKey) {
+    public void setPrivateKey(PrivateKey privateKey) {
         this.privateKey = privateKey;
     }
 

@@ -1,11 +1,11 @@
 package br.pucrio.tecgraf.springboot.openbus;
 
+import br.pucrio.tecgraf.springboot.openbus.autoconfigure.OpenBusApplication;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
-import org.springframework.boot.context.properties.EnableConfigurationProperties;
 
 //@EnableConfigurationProperties
-@OpenBusApplication("springboot-sample")
+@OpenBusApplication(value = "springboot-sample", major = 1, minor = 0, patch = 0)
 @SpringBootApplication
 public class Main {
 

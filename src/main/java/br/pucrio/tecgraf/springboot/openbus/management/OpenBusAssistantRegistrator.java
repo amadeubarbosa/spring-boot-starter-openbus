@@ -1,7 +1,6 @@
 package br.pucrio.tecgraf.springboot.openbus.management;
 
-import br.pucrio.tecgraf.springboot.openbus.OpenBusProperties;
-import br.pucrio.tecgraf.springboot.openbus.OpenBusPropertiesCustom;
+import br.pucrio.tecgraf.springboot.openbus.properties.OpenBusConfiguration;
 import br.pucrio.tecgraf.springboot.openbus.register.ServiceOffer;
 import br.pucrio.tecgraf.springboot.openbus.register.ServiceOfferRegister;
 import org.omg.CORBA.ORB;
@@ -16,8 +15,10 @@ import tecgraf.openbus.assistant.Assistant;
 import tecgraf.openbus.assistant.AssistantParams;
 import tecgraf.openbus.core.v2_0.services.offer_registry.ServiceProperty;
 
+import java.security.PrivateKey;
 import java.security.interfaces.RSAPrivateKey;
 import java.util.Collection;
+import java.util.Properties;
 
 @Component
 public class OpenBusAssistantRegistrator implements OpenBusRegistrator {
@@ -39,26 +40,33 @@ public class OpenBusAssistantRegistrator implements OpenBusRegistrator {
 
     public OpenBusAssistantRegistrator(
             OpenBusFailureCallback openbusFailureCallback,
-            OpenBusProperties openBusProperties,
-            OpenBusPropertiesCustom openBusPropertiesCustom,
+            OpenBusConfiguration openBusConfiguration,
+            Properties connectionProperties,
             ORB orb,
             POA poa,
             ServiceOfferRegister serviceOffers) throws SCSException {
         // Assistant params
         assistantParams = new AssistantParams();
-        assistantParams.interval = openBusProperties.getRetryInterval().getSeconds() / 1F;
+        assistantParams.interval = openBusConfiguration.getRetryInterval().getSeconds() / 1F;
         assistantParams.callback = openbusFailureCallback;
         assistantParams.orb = orb;
-        assistantParams.connprops = openBusPropertiesCustom.getProperties();
+        assistantParams.connprops = connectionProperties;
         // openBus params
-        this.address = openBusProperties.getAddress();
-        this.port = openBusProperties.getPort();
-        this.name = openBusProperties.getName();
-        this.privateKey = openBusProperties.getPrivateKey();
+        this.address = openBusConfiguration.getAddress();
+        this.port = openBusConfiguration.getPort();
+        this.name = openBusConfiguration.getName();
+        this.privateKey = loadRSAPrivateKey(openBusConfiguration.getPrivateKey());
         this.orb = orb;
         this.poa = poa;
         this.serviceOffers = serviceOffers.create();
         logger.info("Configurações do assistente openBus inicializado");
+    }
+
+    private RSAPrivateKey loadRSAPrivateKey(PrivateKey privateKey) {
+        if (!(privateKey instanceof RSAPrivateKey)) {
+            throw new RuntimeException("O assistente do OpenBus só suporta chaves RSA");
+        }
+        return (RSAPrivateKey)privateKey;
     }
 
     @Override

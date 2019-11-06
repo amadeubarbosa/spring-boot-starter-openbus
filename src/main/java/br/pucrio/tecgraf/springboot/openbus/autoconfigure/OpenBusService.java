@@ -1,4 +1,4 @@
-package br.pucrio.tecgraf.springboot.openbus;
+package br.pucrio.tecgraf.springboot.openbus.autoconfigure;
 
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.stereotype.Service;

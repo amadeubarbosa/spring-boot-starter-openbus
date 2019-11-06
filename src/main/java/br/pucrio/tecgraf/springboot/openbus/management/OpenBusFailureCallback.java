@@ -1,6 +1,6 @@
 package br.pucrio.tecgraf.springboot.openbus.management;
 
-import br.pucrio.tecgraf.springboot.openbus.OpenBusProperties;
+import br.pucrio.tecgraf.springboot.openbus.properties.OpenBusConfiguration;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Component;
@@ -17,10 +17,10 @@ class OpenBusFailureCallback implements OnFailureCallback {
 
 	private Logger logger = LoggerFactory.getLogger(OpenBusFailureCallback.class);
 
-	private OpenBusProperties openBusProperties;
+	private OpenBusConfiguration openBusConfiguration;
 
-	public OpenBusFailureCallback(OpenBusProperties openBusProperties) {
-		this.openBusProperties = openBusProperties;
+	public OpenBusFailureCallback(OpenBusConfiguration openBusConfiguration) {
+		this.openBusConfiguration = openBusConfiguration;
 	}
 
 	@Override
@@ -31,12 +31,12 @@ class OpenBusFailureCallback implements OnFailureCallback {
 			UnauthorizedFacets unauthorizedFacets = (UnauthorizedFacets) exception;
 			details = String.format("(Facetas não autorizadas %s) ", Arrays.deepToString(unauthorizedFacets.facets));
 		}
-		logger.warn("Falha ao registrar componente nos OpenBus. {}Propriedades: {}", details, openBusProperties, exception);
+		logger.warn("Falha ao registrar componente nos OpenBus. {}Propriedades: {}", details, openBusConfiguration, exception);
 	}
 
 	@Override
 	public void onLoginFailure(Assistant assistant, Exception exception) {
-		logger.warn("O processo de login falhou. Propriedades: {}", openBusProperties, exception);
+		logger.warn("O processo de login falhou. Propriedades: {}", openBusConfiguration, exception);
 	}
 
 	@Override
