@@ -1,0 +1,2 @@
+#org.springframework.boot.env.EnvironmentPostProcessor=br.pucrio.tecgraf.springboot.openbus.OpenBusPostInitializer
+#org.springframework.context.ApplicationContextInitializer=br.pucrio.tecgraf.springboot.openbus.OpenBusApplicationContextInitializer

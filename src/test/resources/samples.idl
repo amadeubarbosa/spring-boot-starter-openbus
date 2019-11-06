@@ -1,0 +1,14 @@
+interface Service1 {
+    string
+    greetsOne(
+        in string return_message
+    );
+};
+
+
+interface Service2 {
+    string
+    greetsTwo(
+        in string return_message
+    );
+};
