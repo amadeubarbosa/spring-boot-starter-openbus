@@ -1,6 +1,7 @@
 package br.pucrio.tecgraf.springboot.openbus.management;
 
 import br.pucrio.tecgraf.springboot.openbus.properties.OpenBusConfiguration;
+import br.pucrio.tecgraf.springboot.openbus.properties.OpenBusPropertiesConnection;
 import br.pucrio.tecgraf.springboot.openbus.register.ServiceOffer;
 import br.pucrio.tecgraf.springboot.openbus.register.ServiceOfferRegister;
 import org.omg.CORBA.ORB;
@@ -9,6 +10,7 @@ import org.omg.CORBA.UserException;
 import org.omg.PortableServer.POA;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Component;
 import scs.core.exception.SCSException;
 import tecgraf.openbus.assistant.Assistant;
@@ -33,31 +35,25 @@ public class OpenBusAssistantRegistrator implements OpenBusRegistrator {
 
     private Assistant assistant;
 
-    private ORB orb;
-    private POA poa;
-
     private Collection<ServiceOffer> serviceOffers;
 
     public OpenBusAssistantRegistrator(
+            ORB orb,
             OpenBusFailureCallback openbusFailureCallback,
             OpenBusConfiguration openBusConfiguration,
-            Properties connectionProperties,
-            ORB orb,
-            POA poa,
+            OpenBusPropertiesConnection openBusPropertiesConnection,
             ServiceOfferRegister serviceOffers) throws SCSException {
         // Assistant params
         assistantParams = new AssistantParams();
         assistantParams.interval = openBusConfiguration.getRetryInterval().getSeconds() / 1F;
         assistantParams.callback = openbusFailureCallback;
         assistantParams.orb = orb;
-        assistantParams.connprops = connectionProperties;
+        assistantParams.connprops = openBusPropertiesConnection.producer();
         // openBus params
         this.address = openBusConfiguration.getAddress();
         this.port = openBusConfiguration.getPort();
         this.name = openBusConfiguration.getName();
         this.privateKey = loadRSAPrivateKey(openBusConfiguration.getPrivateKey());
-        this.orb = orb;
-        this.poa = poa;
         this.serviceOffers = serviceOffers.create();
         logger.info("Configurações do assistente openBus inicializado");
     }
@@ -67,16 +63,6 @@ public class OpenBusAssistantRegistrator implements OpenBusRegistrator {
             throw new RuntimeException("O assistente do OpenBus só suporta chaves RSA");
         }
         return (RSAPrivateKey)privateKey;
-    }
-
-    @Override
-    public void activatePOA() {
-        try {
-            poa.the_POAManager().activate();
-        }
-        catch (UserException | SystemException e) {
-            throw new RuntimeException("Erro ao tentar ativar o POA raíz.", e);
-        }
     }
 
     @Override
@@ -104,16 +90,6 @@ public class OpenBusAssistantRegistrator implements OpenBusRegistrator {
                         "serviço %s (%s:%d)", name, address, port));
             }
         }
-    }
-
-    /**
-     * Inicializa o object request broker.
-     */
-    @Override
-    public void startOrb() {
-        logger.info(String.format("O Serviço %s (openBus %s:%s) está aguardando por requisições dos clientes.",
-                name, address, port));
-        orb.run();
     }
 
     @Override

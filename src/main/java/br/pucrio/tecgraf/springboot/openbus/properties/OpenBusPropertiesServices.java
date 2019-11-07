@@ -4,32 +4,28 @@ import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.context.annotation.PropertySource;
+import org.springframework.stereotype.Component;
 
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Properties;
 
+// Camel-case não são mais permitidos: no springboot >2.0 o kebab-case é obrigatório
 @Configuration
-public class OpenBusPropertiesServices {
+@ConfigurationProperties(prefix = "openbus.services")
+@PropertySource("classpath:application.properties")
+@Component
+public class OpenBusPropertiesServices extends AbstractPropertiesFile {
 
-    @ConfigurationProperties(prefix = "openbus.services")
-    class OpenBusPropertiesServicesInternal {
-        private Map<String, String> properties = new HashMap<>();
+    private boolean traduzir;
 
-        public Map<String, String> getProducer() {
-            return properties;
-        }
+    public boolean isTraduzir() {
+        return traduzir;
     }
 
-    @Configuration
-    @EnableConfigurationProperties(OpenBusPropertiesServicesInternal.class)
-    public class OpenBusServicesAssistantFactory {
-
-        @Bean(name = "servicesProperties")
-        public Map<String, String> producer(OpenBusPropertiesServicesInternal openBusPropertiesServicesInternal) {
-            return openBusPropertiesServicesInternal.getProducer();
-        }
-
+    public void setTraduzir(boolean traduzir) {
+        this.traduzir = traduzir;
     }
 
 }

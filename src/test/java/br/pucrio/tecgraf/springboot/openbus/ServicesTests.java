@@ -12,12 +12,12 @@ import static org.junit.Assert.assertEquals;
 @ContextConfiguration(classes = MacumbaOpenbusConfiguration.class)*/
 public class ServicesTests {
 
-    @Autowired
+    /*@Autowired
     Service1 service;
 
     @Test
     public void runService1() {
         assertEquals("Hello from one!", service.greetsOne());
-    }
+    }*/
 
 }

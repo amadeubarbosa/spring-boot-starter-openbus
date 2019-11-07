@@ -1,8 +1,12 @@
 package br.pucrio.tecgraf.springboot.openbus.autoconfigure;
 
+import br.pucrio.tecgraf.springboot.openbus.properties.OpenBusPropertiesConnection;
+import br.pucrio.tecgraf.springboot.openbus.properties.OpenBusPropertiesOrb;
+import br.pucrio.tecgraf.springboot.openbus.properties.OpenBusPropertiesServices;
 import org.springframework.beans.BeansException;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
+import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.ApplicationContextAware;
 import org.springframework.context.annotation.Bean;
@@ -12,7 +16,7 @@ import org.springframework.core.annotation.AnnotationUtils;
 import java.util.Map;
 
 @Configuration(proxyBeanMethods = false)
-
+@EnableConfigurationProperties({OpenBusPropertiesConnection.class, OpenBusPropertiesOrb.class, OpenBusPropertiesServices.class})
 public class OpenBusAutoConfiguration implements ApplicationContextAware {
 
     private ApplicationContext applicationContext;

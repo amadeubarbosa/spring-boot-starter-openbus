@@ -1,5 +1,6 @@
 package br.pucrio.tecgraf.springboot.openbus.management;
 
+import br.pucrio.tecgraf.springboot.openbus.orb.ORBManager;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.BeansException;
@@ -16,23 +17,26 @@ public class OpenBusApplicationListener {
 	private Logger logger = LoggerFactory.getLogger(OpenBusApplicationListener.class);
 
 	private OpenBusRegistrator openBusRegistrator;
+	private ORBManager orbManager;
 
 	public OpenBusApplicationListener(BeanFactory beanFactory) {
 		// Instantiate registrator bean
 		openBusRegistrator = beanFactory.getBean(OpenBusRegistrator.class);
+		// Instantiate ORBManager bean
+		orbManager = beanFactory.getBean(ORBManager.class);
 	}
 
 	@EventListener
 	public void onStart(ContextStartedEvent event) {
 		System.out.println("APPLICATION ID: " + event.getApplicationContext().getId());
 		// Ativa o poa raiz
-		openBusRegistrator.activatePOA();
+		orbManager.activatePOA();
 		// Cria o assistente
 		openBusRegistrator.initializeEngine();
 		// Register service
 		openBusRegistrator.registerServices();
 		// Inicializa o ORB
-		openBusRegistrator.startOrb();
+		orbManager.startOrb();
 	}
 
 	@EventListener
