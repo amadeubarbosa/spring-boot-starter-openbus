@@ -5,7 +5,7 @@ import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 
 //@EnableConfigurationProperties
-@OpenBusApplication(value = "springboot-sample", major = 1, minor = 0, patch = 0)
+@OpenBusApplication(value = "servico-teste", major = 1, minor = 0, patch = 0)
 @SpringBootApplication
 public class Main {
 

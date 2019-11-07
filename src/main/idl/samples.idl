@@ -1,0 +1,12 @@
+module br { module pucrio { module tecgraf { module springboot { module openbus {
+
+interface ServiceOperations1 {
+    string greetsOne();
+};
+
+
+interface ServiceOperations2 {
+    string greetsTwo();
+};
+
+}; }; }; }; };

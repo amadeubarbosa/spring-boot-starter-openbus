@@ -2,13 +2,14 @@ package br.pucrio.tecgraf.springboot.crypt;
 
 import org.bouncycastle.jce.provider.BouncyCastleProvider;
 import org.springframework.stereotype.Component;
+import tecgraf.openbus.exception.CryptographyException;
+import tecgraf.openbus.security.Cryptography;
 
 import java.io.IOException;
 import java.security.*;
 import java.security.spec.InvalidKeySpecException;
 import java.security.spec.PKCS8EncodedKeySpec;
 
-@Component
 public class BouncyCastleKeyReader implements KeyReader {
 
     static {
@@ -23,8 +24,8 @@ public class BouncyCastleKeyReader implements KeyReader {
         return factory.generatePrivate(privKeySpec);
     }
 
-    public static void main(String[] args) throws NoSuchAlgorithmException, NoSuchProviderException, InvalidKeySpecException, IOException {
-        PrivateKey privateKey = new BouncyCastleKeyReader().loadPrivateKey("/Users/valtoni/.ssh/id_rsa");
+    public static void main(String[] args) throws NoSuchAlgorithmException, NoSuchProviderException, InvalidKeySpecException, IOException, CryptographyException {
+        PrivateKey privateKey = Cryptography.getInstance().readKeyFromFile("/home/valtoni/.ssh/private-key.pkcs8");
         System.out.println(privateKey);
     }
 

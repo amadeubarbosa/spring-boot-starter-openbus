@@ -7,6 +7,8 @@ import java.util.Collection;
 
 public interface ServiceOffer {
 
+	String getName();
+
 	IComponent getComponent();
 
 	Collection<ServiceProperty> getServiceProperties();

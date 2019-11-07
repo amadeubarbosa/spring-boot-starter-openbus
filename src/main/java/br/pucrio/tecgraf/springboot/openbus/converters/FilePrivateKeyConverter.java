@@ -6,6 +6,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.boot.context.properties.ConfigurationPropertiesBinding;
 import org.springframework.core.convert.converter.Converter;
 import org.springframework.stereotype.Component;
+import tecgraf.openbus.exception.CryptographyException;
 
 import java.io.IOException;
 import java.security.NoSuchAlgorithmException;
@@ -27,7 +28,7 @@ public class FilePrivateKeyConverter implements Converter<String, PrivateKey> {
     public PrivateKey convert(String source) {
         try {
             return keyReader.loadPrivateKey(source);
-        } catch (NoSuchAlgorithmException | NoSuchProviderException | InvalidKeySpecException | IOException e) {
+        } catch (NoSuchAlgorithmException | NoSuchProviderException | InvalidKeySpecException | IOException | CryptographyException e) {
             throw new RuntimeException(String.format("Ocorreu um erro ao ler a chave privada (%s).",
                     source), e);
         }

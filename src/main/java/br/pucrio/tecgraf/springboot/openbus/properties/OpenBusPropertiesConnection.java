@@ -10,9 +10,6 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Properties;
 
-// TODO Consertar para autoconfiguration
-@Configuration
-@Component
 @ConfigurationProperties(prefix = "openbus.connection")
 public class OpenBusPropertiesConnection extends AbstractPropertiesFile {
 

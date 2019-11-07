@@ -28,12 +28,9 @@ public class OpenBusApplicationListener {
 
 	@EventListener
 	public void onStart(ContextStartedEvent event) {
-		System.out.println("APPLICATION ID: " + event.getApplicationContext().getId());
 		// Ativa o poa raiz
 		orbManager.activatePOA();
-		// Cria o assistente
-		openBusRegistrator.initializeEngine();
-		// Register service
+		// Registra os serviços
 		openBusRegistrator.registerServices();
 		// Inicializa o ORB
 		orbManager.startOrb();

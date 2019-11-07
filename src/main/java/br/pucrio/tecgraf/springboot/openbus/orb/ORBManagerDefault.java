@@ -14,6 +14,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.Configuration;
 import org.springframework.stereotype.Component;
 import tecgraf.openbus.core.ORBInitializer;
 
@@ -59,8 +60,7 @@ public class ORBManagerDefault implements ORBManager {
     }
 
 
-    @Bean(name = "orb")
-    public ORB produceORB() {
+    public ORB getORB() {
         if (orb != null) log.warn("Já havia um ORB rodando e não foi desativado: esse procedimento pode gerar" +
                 " ações inesperadas (o escopo de um ORB sempre deve ser singleton no spring, a não ser que você saiba" +
                 " o que esteja fazendo)");
@@ -68,9 +68,13 @@ public class ORBManagerDefault implements ORBManager {
         return orb;
     }
 
-    @Bean(name = "poa")
-    public POA producesORBpo(ORB orb) throws InvalidName {
-        return POAHelper.narrow(orb.resolve_initial_references("RootPOA"));
+    public POA getPOA() {
+        try {
+            poa = POAHelper.narrow(orb.resolve_initial_references("RootPOA"));
+            return poa;
+        } catch (InvalidName invalidName) {
+            throw new RuntimeException("Erro ao ativar o RoorPOA", invalidName);
+        }
     }
 
 }

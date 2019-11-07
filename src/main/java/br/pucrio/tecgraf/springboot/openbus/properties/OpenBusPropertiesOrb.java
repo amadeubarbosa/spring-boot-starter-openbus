@@ -10,8 +10,6 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Properties;
 
-@Configuration
-@Component
 @ConfigurationProperties(prefix = "openbus.orb")
 public class OpenBusPropertiesOrb extends AbstractPropertiesFile {
 

@@ -1,5 +1,6 @@
 package br.pucrio.tecgraf.springboot.openbus.register;
 
+import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.LinkedList;
@@ -9,20 +10,18 @@ import tecgraf.openbus.core.v2_0.services.offer_registry.ServiceProperty;
 
 public class DefaultServiceOffer implements ServiceOffer {
 
+	private String name;
 	private IComponent component;
 	private Collection<ServiceProperty> properties;
 
-	public DefaultServiceOffer(IComponent component, ServiceProperty... properties) {
+	public DefaultServiceOffer(String name, IComponent component, ServiceProperty... properties) {
+		this.name = name;
 		this.component = component;
-		this.properties = new LinkedList();
-		ServiceProperty[] arr$ = properties;
-		int len$ = properties.length;
+		this.properties = Arrays.asList(properties);
+	}
 
-		for (int i$ = 0; i$ < len$; ++i$) {
-			ServiceProperty property = arr$[i$];
-			this.properties.add(property);
-		}
-
+	public String getName() {
+		return name;
 	}
 
 	public IComponent getComponent() {
@@ -31,6 +30,26 @@ public class DefaultServiceOffer implements ServiceOffer {
 
 	public Collection<ServiceProperty> getServiceProperties() {
 		return Collections.unmodifiableCollection(this.properties);
+	}
+
+	@Override
+	public String toString() {
+		return "DefaultServiceOffer{" +
+				"name='" + name + '\'' +
+				'}';
+	}
+
+	@Override
+	public boolean equals(Object o) {
+		if (this == o) return true;
+		if (o == null || getClass() != o.getClass()) return false;
+		DefaultServiceOffer that = (DefaultServiceOffer) o;
+		return name.equals(that.name);
+	}
+
+	@Override
+	public int hashCode() {
+		return name.hashCode();
 	}
 
 }

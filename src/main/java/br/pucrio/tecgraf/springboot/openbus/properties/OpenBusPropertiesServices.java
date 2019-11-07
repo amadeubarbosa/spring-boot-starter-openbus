@@ -12,20 +12,7 @@ import java.util.Map;
 import java.util.Properties;
 
 // Camel-case não são mais permitidos: no springboot >2.0 o kebab-case é obrigatório
-@Configuration
 @ConfigurationProperties(prefix = "openbus.services")
-@PropertySource("classpath:application.properties")
-@Component
 public class OpenBusPropertiesServices extends AbstractPropertiesFile {
-
-    private boolean traduzir;
-
-    public boolean isTraduzir() {
-        return traduzir;
-    }
-
-    public void setTraduzir(boolean traduzir) {
-        this.traduzir = traduzir;
-    }
 
 }
