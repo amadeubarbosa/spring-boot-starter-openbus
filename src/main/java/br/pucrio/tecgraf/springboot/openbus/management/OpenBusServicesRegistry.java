@@ -34,7 +34,7 @@ public class OpenBusServicesRegistry {
     }
 
     public Set<ServiceOffer> availableOffers() {
-        return availableServiceOffers;
+        return new HashSet<>(availableServiceOffers);
     }
 
     public Set<ServiceOffer> registeredOffers() {

@@ -7,6 +7,7 @@ import org.springframework.beans.BeansException;
 import org.springframework.beans.factory.BeanFactory;
 import org.springframework.beans.factory.BeanFactoryAware;
 import org.springframework.context.event.ContextClosedEvent;
+import org.springframework.context.event.ContextRefreshedEvent;
 import org.springframework.context.event.ContextStartedEvent;
 import org.springframework.context.event.EventListener;
 import org.springframework.stereotype.Component;
@@ -27,7 +28,7 @@ public class OpenBusApplicationListener {
 	}
 
 	@EventListener
-	public void onStart(ContextStartedEvent event) {
+	public void onStart(ContextRefreshedEvent event) {
 		// Ativa o poa raiz
 		orbManager.activatePOA();
 		// Registra os serviços

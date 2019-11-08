@@ -61,19 +61,22 @@ public class ORBManagerDefault implements ORBManager {
 
 
     public ORB getORB() {
-        if (orb != null) log.warn("Já havia um ORB rodando e não foi desativado: esse procedimento pode gerar" +
-                " ações inesperadas (o escopo de um ORB sempre deve ser singleton no spring, a não ser que você saiba" +
-                " o que esteja fazendo)");
-        orb = ORBInitializer.initORB(new String[] {}, orbProperties);
+        if (orb == null) {
+            orb = ORBInitializer.initORB(new String[] {}, orbProperties);
+            log.info("ORB Inicializado");
+        }
         return orb;
     }
 
     public POA getPOA() {
         try {
-            poa = POAHelper.narrow(orb.resolve_initial_references("RootPOA"));
+            if (poa == null) {
+                poa = POAHelper.narrow(orb.resolve_initial_references("RootPOA"));
+                log.info("RootPOA inicializado");
+            }
             return poa;
         } catch (InvalidName invalidName) {
-            throw new RuntimeException("Erro ao ativar o RoorPOA", invalidName);
+            throw new RuntimeException("Erro ao ativar o RootPOA", invalidName);
         }
     }
 

@@ -7,6 +7,10 @@ import org.springframework.stereotype.Component;
 import tecgraf.openbus.assistant.Assistant;
 import tecgraf.openbus.core.v2_0.services.offer_registry.ServiceProperty;
 
+import java.util.Collections;
+import java.util.HashSet;
+import java.util.Set;
+
 @Component
 public class OpenBusAssistantRegistrator implements OpenBusRegistrator {
 

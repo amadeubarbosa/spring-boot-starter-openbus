@@ -16,7 +16,6 @@ public class OpenBusConfiguration {
 
     @NotNull(message = "Informe o endereço do openbus onde o serviço deverá ser registrado")
     private String address;
-    @NotNull(message = "Informe o nome do serviço a ser registrado")
     private String name;
     @NotNull(message = "Informe a porta do serviço que será levantada localmente")
     private Integer port;

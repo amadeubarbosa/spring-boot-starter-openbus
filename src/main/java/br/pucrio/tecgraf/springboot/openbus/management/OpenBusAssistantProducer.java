@@ -5,6 +5,7 @@ import br.pucrio.tecgraf.springboot.openbus.properties.OpenBusPropertiesConnecti
 import org.omg.CORBA.ORB;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import tecgraf.openbus.assistant.Assistant;
@@ -26,6 +27,8 @@ public class OpenBusAssistantProducer {
     private RSAPrivateKey privateKey;
 
     public OpenBusAssistantProducer(ORB orb,
+                                    @Qualifier("componentName")
+                                    String componentName,
                                     OpenBusFailureCallback openbusFailureCallback,
                                     OpenBusConfiguration openBusConfiguration,
                                     OpenBusPropertiesConnection openBusPropertiesConnection) {
@@ -38,7 +41,7 @@ public class OpenBusAssistantProducer {
         // openBus params
         this.address = openBusConfiguration.getAddress();
         this.port = openBusConfiguration.getPort();
-        this.name = openBusConfiguration.getName();
+        this.name = componentName == null ? openBusConfiguration.getName() : componentName;
         this.privateKey = loadRSAPrivateKey(openBusConfiguration.getPrivateKey());
         log.info("Configurações do assistente openBus inicializado");
     }
