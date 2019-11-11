@@ -11,36 +11,33 @@ import org.springframework.context.event.ContextRefreshedEvent;
 import org.springframework.context.event.ContextStartedEvent;
 import org.springframework.context.event.EventListener;
 import org.springframework.stereotype.Component;
+import scs.core.exception.SCSException;
 
 @Component
 public class OpenBusApplicationListener {
 
 	private Logger logger = LoggerFactory.getLogger(OpenBusApplicationListener.class);
 
-	private OpenBusRegistrator openBusRegistrator;
+	private OpenBusApplicationInstance openBusApplicationInstance;
 	private ORBManager orbManager;
 
 	public OpenBusApplicationListener(BeanFactory beanFactory) {
-		// Instantiate registrator bean
-		openBusRegistrator = beanFactory.getBean(OpenBusRegistrator.class);
-		// Instantiate ORBManager bean
-		orbManager = beanFactory.getBean(ORBManager.class);
+		// OpenBus instance
+		openBusApplicationInstance = beanFactory.getBean(OpenBusApplicationInstance.class);
 	}
 
 	@EventListener
-	public void onStart(ContextRefreshedEvent event) {
-		// Ativa o poa raiz
-		orbManager.activatePOA();
-		// Registra os serviços
-		openBusRegistrator.registerServices();
-		// Inicializa o ORB
-		orbManager.startOrb();
+	public void onStart(ContextRefreshedEvent event) throws SCSException {
+		// Cria a instância do componente local para disponibilização par aa aplicação
+		openBusApplicationInstance.initialize();
+		// Inicia a instância do componente
+		openBusApplicationInstance.start();;
 	}
 
 	@EventListener
 	public void onClose(ContextClosedEvent event) {
 		// Sinaliza parada para o registro
-		openBusRegistrator.stop();
+		openBusApplicationInstance.stop();
 	}
 
 }

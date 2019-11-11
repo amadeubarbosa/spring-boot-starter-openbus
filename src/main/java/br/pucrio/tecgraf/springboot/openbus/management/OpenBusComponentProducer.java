@@ -8,7 +8,7 @@ import scs.core.ComponentContext;
 import scs.core.ComponentId;
 import scs.core.exception.SCSException;
 
-public class OpenBusComponentProducer {
+public class OpenBusComponentProducer implements Produtor<ComponentContext> {
 
     private ORB orb;
     private POA poa;
@@ -30,7 +30,7 @@ public class OpenBusComponentProducer {
         this.patch = patch;
     }
 
-    public ComponentContext producesComponentContext() throws SCSException {
+    public ComponentContext produces() throws SCSException {
         // A especificação da plataforma é uma concatenação de "java" + a versão da propriedade da versão de java
         String platformSpecification = String.format("java-%s", System.getProperty("java.specification.version"));
         return new ComponentContext(orb, poa, new ComponentId(

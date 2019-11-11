@@ -13,7 +13,7 @@ import tecgraf.openbus.core.v2_0.services.offer_registry.UnauthorizedFacets;
 import java.util.Arrays;
 
 @Component
-class OpenBusFailureCallback implements OnFailureCallback {
+public class OpenBusFailureCallback implements OnFailureCallback {
 
 	private Logger logger = LoggerFactory.getLogger(OpenBusFailureCallback.class);
 

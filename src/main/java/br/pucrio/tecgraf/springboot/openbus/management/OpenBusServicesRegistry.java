@@ -3,12 +3,10 @@ package br.pucrio.tecgraf.springboot.openbus.management;
 import br.pucrio.tecgraf.springboot.openbus.register.ServiceOffer;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.stereotype.Component;
 
 import java.util.HashSet;
 import java.util.Set;
 
-@Component
 public class OpenBusServicesRegistry {
 
     private Logger log = LoggerFactory.getLogger(OpenBusServicesRegistry.class);
