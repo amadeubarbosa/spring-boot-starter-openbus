@@ -2,7 +2,6 @@ package br.pucrio.tecgraf.springboot.openbus.management;
 
 import br.pucrio.tecgraf.springboot.openbus.orb.ORBManager;
 import br.pucrio.tecgraf.springboot.openbus.properties.OpenBusConfiguration;
-import br.pucrio.tecgraf.springboot.openbus.properties.OpenBusPropertiesConnection;
 import br.pucrio.tecgraf.springboot.openbus.properties.OpenBusPropertiesServices;
 import br.pucrio.tecgraf.springboot.openbus.register.DefaultServiceOffer;
 import br.pucrio.tecgraf.springboot.openbus.register.ServiceOffer;

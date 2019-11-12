@@ -1,5 +1,6 @@
 package br.pucrio.tecgraf.springboot.openbus.management;
 
+import br.pucrio.tecgraf.springboot.openbus.orb.ORBManager;
 import br.pucrio.tecgraf.springboot.openbus.properties.OpenBusConfiguration;
 import br.pucrio.tecgraf.springboot.openbus.properties.OpenBusPropertiesConnection;
 import org.omg.CORBA.ORB;
@@ -7,6 +8,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import tecgraf.openbus.assistant.Assistant;
 import tecgraf.openbus.assistant.AssistantParams;
+import tecgraf.openbus.assistant.OnFailureCallback;
 
 import java.security.PrivateKey;
 import java.security.interfaces.RSAPrivateKey;
@@ -22,16 +24,16 @@ public class OpenBusAssistantProducer implements Produtor<Assistant> {
     private String name;
     private RSAPrivateKey privateKey;
 
-    public OpenBusAssistantProducer(ORB orb,
+    public OpenBusAssistantProducer(ORBManager orbManager,
                                     String componentName,
-                                    OpenBusFailureCallback openbusFailureCallback,
+                                    OnFailureCallback onFailureCallback,
                                     OpenBusConfiguration openBusConfiguration,
                                     OpenBusPropertiesConnection openBusPropertiesConnection) {
         // Assistant params
         assistantParams = new AssistantParams();
         assistantParams.interval = openBusConfiguration.getRetryInterval().getSeconds() / 1F;
-        assistantParams.callback = openbusFailureCallback;
-        assistantParams.orb = orb;
+        assistantParams.callback = onFailureCallback;
+        assistantParams.orb = orbManager.getORB();
         assistantParams.connprops = openBusPropertiesConnection.producer();
         // openBus params
         this.address = openBusConfiguration.getAddress();

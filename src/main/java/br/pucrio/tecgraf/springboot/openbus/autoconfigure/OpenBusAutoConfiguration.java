@@ -1,14 +1,15 @@
 package br.pucrio.tecgraf.springboot.openbus.autoconfigure;
 
 import br.pucrio.tecgraf.springboot.openbus.management.OpenBusApplicationInstance;
-import br.pucrio.tecgraf.springboot.openbus.management.OpenBusFailureCallback;
-import br.pucrio.tecgraf.springboot.openbus.management.OpenBusRegistrator;
-import br.pucrio.tecgraf.springboot.openbus.orb.ORBManager;
 import br.pucrio.tecgraf.springboot.openbus.properties.OpenBusConfiguration;
 import br.pucrio.tecgraf.springboot.openbus.properties.OpenBusPropertiesConnection;
 import br.pucrio.tecgraf.springboot.openbus.properties.OpenBusPropertiesOrb;
 import br.pucrio.tecgraf.springboot.openbus.properties.OpenBusPropertiesServices;
 import org.springframework.beans.BeansException;
+import org.springframework.beans.factory.BeanCreationException;
+import org.springframework.beans.factory.BeanFactory;
+import org.springframework.beans.factory.BeanFactoryAware;
+import org.springframework.beans.factory.ListableBeanFactory;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.ApplicationContextAware;
@@ -20,10 +21,9 @@ import java.util.Map;
 
 @Configuration(proxyBeanMethods = false)
 @EnableConfigurationProperties({OpenBusPropertiesConnection.class, OpenBusPropertiesOrb.class, OpenBusPropertiesServices.class})
-public class OpenBusAutoConfiguration implements ApplicationContextAware {
+public class OpenBusAutoConfiguration implements BeanFactoryAware {
 
     private ApplicationContext applicationContext;
-    private Object openBusComponent;
 
     private String componentName;
 
@@ -31,27 +31,8 @@ public class OpenBusAutoConfiguration implements ApplicationContextAware {
     private byte minor;
     private byte patch;
 
-    @Bean(name = "major")
-    public byte major() {
-        return major;
-    }
-
-    @Bean(name = "minor")
-    public byte minor() {
-        return minor;
-    }
-
-    @Bean(name = "patch")
-    public byte patch() {
-        return patch;
-    }
-
-    @Bean(name = "componentName")
-    public String componentName() {
-        return componentName;
-    }
-
     private OpenBusApplication openBusApplication;
+
 
     /**
      * A versão pode vir de 3 lugares (na ordem de prioridade)
@@ -60,6 +41,12 @@ public class OpenBusAutoConfiguration implements ApplicationContextAware {
      * 3) Do manifesto
      * Caso não seja encontrado nesses 3 lugares, o valor padrão será 0.0.0
      */
+    private void registerComponent() {
+        createAnnotationInstance();
+        registerName();
+        registerVersion();
+    }
+
     private void registerVersion() {
         this.major = openBusApplication.major();
         this.minor = openBusApplication.minor();
@@ -86,28 +73,35 @@ public class OpenBusAutoConfiguration implements ApplicationContextAware {
         this.componentName = openBusApplication.value();
     }
 
-    private void registerComponent() {
-        createAnnotationInstance();
-        registerName();
-        registerVersion();
+    @Bean
+    public OpenBusApplicationInstance registerOpenBusApplicationInstance(ApplicationContext applicationContext)
+            throws Exception {
+
+        this.applicationContext = applicationContext;
+
+        // Registra os detalhes do componente
+        registerComponent();
+
+        // Obtém os beans de configuração
+        OpenBusPropertiesOrb openBusPropertiesOrb = applicationContext.getBean(OpenBusPropertiesOrb.class);
+        OpenBusConfiguration openBusConfiguration = applicationContext.getBean(OpenBusConfiguration.class);
+        OpenBusPropertiesConnection openBusPropertiesConnection = applicationContext.getBean(OpenBusPropertiesConnection.class);
+        OpenBusPropertiesServices openBusPropertiesServices = applicationContext.getBean(OpenBusPropertiesServices.class);
+        // Cria o builder de instâncias openbus
+        OpenBusApplicationInstanceSpring openBusApplicationInstance = new OpenBusApplicationInstanceSpring(
+                componentName, major, minor, patch,
+                openBusPropertiesOrb, openBusConfiguration, openBusPropertiesConnection,
+                openBusPropertiesServices, null);
+        openBusApplicationInstance.setBeanFactory(listableBeanFactory);
+        // Delega a criação dos componentes
+        return openBusApplicationInstance.instantiate();
     }
+
+    private ListableBeanFactory listableBeanFactory;
 
     @Override
-    public void setApplicationContext(ApplicationContext applicationContext) throws BeansException {
-        this.applicationContext = applicationContext;
-        registerComponent();
-    }
-
-
-    @Bean
-    public OpenBusApplicationInstance openBusApplicationInstance(ORBManager orbManager,
-                                                                 OpenBusRegistrator openBusRegistrator,
-                                                                 OpenBusFailureCallback openbusFailureCallback,
-                                                                 OpenBusConfiguration openBusConfiguration,
-                                                                 OpenBusPropertiesServices openBusPropertiesServices,
-                                                                 OpenBusPropertiesConnection openBusPropertiesConnection) {
-        return new OpenBusApplicationInstance(orbManager, openBusRegistrator,
-                openbusFailureCallback, openBusConfiguration, openBusPropertiesServices, openBusPropertiesConnection);
+    public void setBeanFactory(BeanFactory beanFactory) throws BeansException {
+        this.listableBeanFactory = (ListableBeanFactory) beanFactory;
     }
 
 }

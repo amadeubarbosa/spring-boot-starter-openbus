@@ -20,7 +20,6 @@ import tecgraf.openbus.core.ORBInitializer;
 
 import java.util.Properties;
 
-@Component
 public class ORBManagerDefault implements ORBManager {
 
     private Logger log = LoggerFactory.getLogger(ORBManagerDefault.class);
@@ -35,10 +34,11 @@ public class ORBManagerDefault implements ORBManager {
 
     public void activatePOA() {
         try {
+            log.info("Ativando POAManager");
             poa.the_POAManager().activate();
         }
         catch (UserException | SystemException e) {
-            throw new RuntimeException("Erro ao tentar ativar o POA raíz.", e);
+            throw new RuntimeException("Erro ao tentar ativar o POAManager.", e);
         }
     }
 
@@ -46,6 +46,7 @@ public class ORBManagerDefault implements ORBManager {
      * Inicializa o object request broker.
      */
     public void startOrb() {
+        log.info("Iniciando ORB");
         if (orb instanceof org.jacorb.orb.ORB) {
             org.jacorb.orb.ORB jacORB = (org.jacorb.orb.ORB)orb;
             BasicAdapter basicAdapter = jacORB.getBasicAdapter();
@@ -62,8 +63,8 @@ public class ORBManagerDefault implements ORBManager {
 
     public ORB getORB() {
         if (orb == null) {
+            log.info("Inicializando ORB");
             orb = ORBInitializer.initORB(new String[] {}, orbProperties);
-            log.info("ORB Inicializado");
         }
         return orb;
     }
@@ -71,12 +72,12 @@ public class ORBManagerDefault implements ORBManager {
     public POA getPOA() {
         try {
             if (poa == null) {
+                log.info("Obtendo a referência para RootPOA");
                 poa = POAHelper.narrow(orb.resolve_initial_references("RootPOA"));
-                log.info("RootPOA inicializado");
             }
             return poa;
         } catch (InvalidName invalidName) {
-            throw new RuntimeException("Erro ao ativar o RootPOA", invalidName);
+            throw new RuntimeException("Erro ao obter referência para o RootPOA", invalidName);
         }
     }
 

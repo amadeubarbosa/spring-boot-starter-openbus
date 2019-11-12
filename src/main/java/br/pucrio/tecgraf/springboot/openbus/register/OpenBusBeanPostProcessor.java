@@ -68,11 +68,8 @@ public class OpenBusBeanPostProcessor implements BeanPostProcessor, BeanFactoryA
             // Registra a faceta
             ServiceOffer serviceOffer = openBusApplicationInstance.addService(servant, name, id);
             // Registra um bean com o nome do serviço para a faceta
+            log.info("(1) Bean = {}, {}", beanName, serviceOffer);
             configurableListableBeanFactory.registerSingleton(name, serviceOffer);
-            log.info("(1) Bean = {}, {}", name, serviceOffer);
-            // Sobreescreve o bean encontrado com o mesmo serviço que acabou de ser criado
-            log.info("(2) Bean = {}, {}", beanName, serviceOffer);
-            configurableListableBeanFactory.registerSingleton(beanName, serviceOffer);
         }
     }
 

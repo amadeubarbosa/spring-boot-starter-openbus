@@ -5,8 +5,6 @@ import tecgraf.openbus.exception.CryptographyException;
 import tecgraf.openbus.security.Cryptography;
 
 import java.io.IOException;
-import java.security.NoSuchAlgorithmException;
-import java.security.NoSuchProviderException;
 import java.security.PrivateKey;
 import java.security.spec.InvalidKeySpecException;
 

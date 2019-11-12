@@ -3,15 +3,9 @@ package br.pucrio.tecgraf.springboot.openbus.management;
 import br.pucrio.tecgraf.springboot.openbus.register.ServiceOffer;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.stereotype.Component;
 import tecgraf.openbus.assistant.Assistant;
 import tecgraf.openbus.core.v2_0.services.offer_registry.ServiceProperty;
 
-import java.util.Collections;
-import java.util.HashSet;
-import java.util.Set;
-
-@Component
 public class OpenBusAssistantRegistrator implements OpenBusRegistrator {
 
     private Logger logger = LoggerFactory.getLogger(OpenBusAssistantRegistrator.class);
@@ -33,6 +27,9 @@ public class OpenBusAssistantRegistrator implements OpenBusRegistrator {
             // Move de disponível para registrada
             openBusServicesRegistry.registerService(serviceOffer);
         }
+        logger.info("Status após registro dos serviços: (disponíveis: {}, registrados: {})",
+                openBusServicesRegistry.availableOffers().size(),
+                openBusServicesRegistry.registeredOffers().size());
     }
 
     @Override
@@ -42,6 +39,13 @@ public class OpenBusAssistantRegistrator implements OpenBusRegistrator {
             logger.warn("O assistente do openBus não havia sido criado");
             return;
         }
+        // Remove os serviços registrados
+        for (ServiceOffer serviceOffer: openBusServicesRegistry.availableOffers()) {
+            // Remove os serviços do registry
+            openBusServicesRegistry.removeService(serviceOffer);
+        }
+        // Efetua shutdown do assistant
+        assistant.shutdown();
     }
 
 }

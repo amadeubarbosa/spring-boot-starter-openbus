@@ -3,7 +3,6 @@ package br.pucrio.tecgraf.springboot.openbus.management;
 import org.omg.CORBA.ORB;
 import org.omg.PortableServer.POA;
 import org.springframework.beans.factory.annotation.Qualifier;
-import org.springframework.context.annotation.Bean;
 import scs.core.ComponentContext;
 import scs.core.ComponentId;
 import scs.core.exception.SCSException;
