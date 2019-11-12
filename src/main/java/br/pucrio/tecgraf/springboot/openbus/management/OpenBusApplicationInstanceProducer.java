@@ -6,6 +6,7 @@ import br.pucrio.tecgraf.springboot.openbus.properties.OpenBusConfiguration;
 import br.pucrio.tecgraf.springboot.openbus.properties.OpenBusPropertiesConnection;
 import br.pucrio.tecgraf.springboot.openbus.properties.OpenBusPropertiesOrb;
 import br.pucrio.tecgraf.springboot.openbus.properties.OpenBusPropertiesServices;
+import br.pucrio.tecgraf.springboot.openbus.register.RemoteApplication;
 import tecgraf.openbus.assistant.Assistant;
 import tecgraf.openbus.assistant.OnFailureCallback;
 
@@ -22,8 +23,6 @@ public class OpenBusApplicationInstanceProducer implements Produtor<OpenBusAppli
     private byte patch;
 
     private ORBManager orbManager;
-    private OpenBusServicesRegistry openBusServicesRegistry;
-    private OpenBusRegistrator openBusRegistrator;
     private OpenBusConfiguration openBusConfiguration;
     private OpenBusPropertiesServices openBusPropertiesServices;
 
@@ -68,10 +67,6 @@ public class OpenBusApplicationInstanceProducer implements Produtor<OpenBusAppli
         // Produtor de assistant para o registrator
         this.openBusAssistantProducer = new OpenBusAssistantProducer(orbManager, componentName, onFailureCallback,
                 openBusConfiguration, openBusPropertiesConnection);
-        // Registro padrão de serviços
-        this.openBusServicesRegistry = createOpenBusServicesRegistry();
-        // Registrador com assistente, informando o registry padrão
-        this.openBusRegistrator = createOpenBusRegistrator(openBusServicesRegistry);
         // Configurações do openbus por parâmetro
         this.openBusConfiguration = openBusConfiguration;
         // Configurações de serviço por parâmetro
@@ -83,24 +78,20 @@ public class OpenBusApplicationInstanceProducer implements Produtor<OpenBusAppli
         return notifier.onCreateOrbManager(new ORBManagerDefault(openBusPropertiesOrb));
     }
 
-    public OpenBusServicesRegistry createOpenBusServicesRegistry() {
-        return notifier.onCreateOpenBusServicesRegistry(new OpenBusServicesRegistryDefault());
-    }
-
     public Assistant createAssistant() throws Exception {
         return notifier.onCreateAssistant(openBusAssistantProducer.produces());
     }
 
-    public OpenBusRegistrator createOpenBusRegistrator(OpenBusServicesRegistry openBusServicesRegistry) throws Exception {
-        return notifier.onCreateOpenBusRegistrator(new OpenBusAssistantRegistrator(createAssistant(), openBusServicesRegistry));
+    public OpenBusRegistrator createOpenBusRegistrator(RemoteApplication remoteApplication) throws Exception {
+        return notifier.onCreateOpenBusRegistrator(new OpenBusAssistantRegistrator(createAssistant(), remoteApplication));
     }
 
     @Override
     public OpenBusApplicationInstance produces() throws Exception {
-        return notifier.onCreateOpenBusApplicationInstance(new OpenBusApplicationInstance(
+        OpenBusApplicationInstance instance = new OpenBusApplicationInstance(
                 componentName, major, minor, patch,
-                orbManager, openBusServicesRegistry, openBusRegistrator,
-                openBusConfiguration, openBusPropertiesServices));
+                orbManager, openBusConfiguration, openBusPropertiesServices);
+        return notifier.onCreateOpenBusApplicationInstance(instance);
     }
 
 }

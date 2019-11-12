@@ -3,8 +3,10 @@ package br.pucrio.tecgraf.springboot.openbus.management;
 import br.pucrio.tecgraf.springboot.openbus.orb.ORBManager;
 import br.pucrio.tecgraf.springboot.openbus.properties.OpenBusConfiguration;
 import br.pucrio.tecgraf.springboot.openbus.properties.OpenBusPropertiesServices;
-import br.pucrio.tecgraf.springboot.openbus.register.DefaultServiceOffer;
-import br.pucrio.tecgraf.springboot.openbus.register.ServiceOffer;
+import br.pucrio.tecgraf.springboot.openbus.register.RemoteApplication;
+import br.pucrio.tecgraf.springboot.openbus.register.RemoteApplicationDefault;
+import br.pucrio.tecgraf.springboot.openbus.register.RemoteServiceDefault;
+import br.pucrio.tecgraf.springboot.openbus.register.RemoteService;
 import org.omg.CORBA.ORB;
 import org.omg.PortableServer.POA;
 import org.omg.PortableServer.Servant;
@@ -29,7 +31,6 @@ public class OpenBusApplicationInstance {
     private ORB orb;
     private POA poa;
     private ComponentContext componentContext;
-    private OpenBusServicesRegistry registry;
     private OpenBusRegistrator openBusRegistrator;
 
     private OpenBusConfiguration openBusConfiguration;
@@ -37,13 +38,13 @@ public class OpenBusApplicationInstance {
 
     private ORBManager orbManager;
 
+    private RemoteApplication remoteApplication;
+
     public OpenBusApplicationInstance(String name,
                                       byte major,
                                       byte minor,
                                       byte patch,
                                       ORBManager orbManager,
-                                      OpenBusServicesRegistry registry,
-                                      OpenBusRegistrator openBusRegistrator,
                                       OpenBusConfiguration openBusConfiguration,
                                       OpenBusPropertiesServices openBusPropertiesServices) {
         this.name = name;
@@ -51,8 +52,6 @@ public class OpenBusApplicationInstance {
         this.minor = minor;
         this.patch = patch;
         this.orbManager = orbManager;
-        this.registry = registry;
-        this.openBusRegistrator = openBusRegistrator;
         this.openBusConfiguration = openBusConfiguration;
         this.openBusPropertiesServices = openBusPropertiesServices;
         this.orb = orbManager.getORB();
@@ -62,6 +61,13 @@ public class OpenBusApplicationInstance {
     public void initialize() throws SCSException {
         // Cria o contexto do componente
         createComponentContext();
+        // Cria o item principal que guarda a instância remota
+        createRemoteApplication();
+    }
+
+    public void addRegistrator(OpenBusRegistrator openBusRegistrator) {
+        // Registrador com assistente, informando o registry padrão
+        this.openBusRegistrator = openBusRegistrator;
     }
 
     public void start() {
@@ -76,6 +82,10 @@ public class OpenBusApplicationInstance {
     public void stop() {
         // Sinaliza parada para o registro
         openBusRegistrator.stop();
+    }
+
+    public RemoteApplication getRemoteApplication() {
+        return remoteApplication;
     }
 
     public String getName() {
@@ -101,6 +111,10 @@ public class OpenBusApplicationInstance {
                 name, major, minor, patch, platformSpecification));
     }
 
+    private void createRemoteApplication() {
+        this.remoteApplication = new RemoteApplicationDefault(name, componentContext, mountServiceProperties("application"));
+    }
+
     private ServiceProperty[] mountServiceProperties(String name) {
         Map<String, String> serviceProperties = openBusPropertiesServices.getProperties();
         return serviceProperties.keySet().stream()
@@ -110,19 +124,14 @@ public class OpenBusApplicationInstance {
                 .toArray(new ServiceProperty[]{});
     }
 
-    public ServiceOffer addService(Servant servant, String name, String id) throws SCSException {
+    public RemoteService addService(Servant servant, String name, String id) throws SCSException {
         if (name.equals("default")) throw new SCSException("O nome 'default' é reservado: não pode ser utilizado para criação de serviços OpenBus");
         log.info("Criando serviço openBus: {}, id: {}, servant: {})", name, id, servant);
-        componentContext.addFacet(name, id, servant);
         // Cria o conceito de oferta e propriedades e o registra como bean
-        ServiceOffer serviceOffer = new DefaultServiceOffer(
-                name,
-                componentContext.getIComponent(),
-                mountServiceProperties(name)
-        );
+        RemoteService remoteService = new RemoteServiceDefault(remoteApplication, servant, name, id);
         // Registra o serviço para depois ser registrado no OpenBus
-        registry.addService(serviceOffer);
-        return serviceOffer;
+        remoteApplication.addService(remoteService);
+        return remoteService;
     }
 
 }

@@ -6,6 +6,7 @@ import br.pucrio.tecgraf.springboot.openbus.properties.OpenBusConfiguration;
 import br.pucrio.tecgraf.springboot.openbus.properties.OpenBusPropertiesConnection;
 import br.pucrio.tecgraf.springboot.openbus.properties.OpenBusPropertiesOrb;
 import br.pucrio.tecgraf.springboot.openbus.properties.OpenBusPropertiesServices;
+import br.pucrio.tecgraf.springboot.openbus.register.RemoteApplication;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.BeansException;
@@ -22,7 +23,7 @@ public class OpenBusApplicationInstanceSpring implements
     private Logger log = LoggerFactory.getLogger(OpenBusApplicationInstanceSpring.class);
 
     public static final String ORB_MANAGER = "orbManager";
-    public static final String OPEN_BUS_SERVICES_REGISTRY = "openBusServicesRegistry";
+    public static final String OPEN_BUS_REMOTE_APPLICATION = "remoteApplication";
     public static final String ASSISTANT = "assistant";
     public static final String OPEN_BUS_REGISTRATOR = "openBusRegistrator";
     public static final String OPEN_BUS_APPLICATION_INSTANCE = "openBusApplicationInstance";
@@ -85,7 +86,11 @@ public class OpenBusApplicationInstanceSpring implements
         log.info("Instância do componente OpenBus criada");
         // Cria a instância do componente local para disponibilização para a aplicação
         openBusApplicationInstance.initialize();
+        log.debug("Instância do componente OpenBus inicializada");
+        // Adiciona o registrador criado pelo producer
+        openBusApplicationInstance.addRegistrator(producer.createOpenBusRegistrator(openBusApplicationInstance.getRemoteApplication()));
         log.info("Instância do componente OpenBus pronta para utilização");
+        registerOpenBusRemoteApplication(openBusApplicationInstance.getRemoteApplication());
         return openBusApplicationInstance;
     }
 
@@ -96,11 +101,9 @@ public class OpenBusApplicationInstanceSpring implements
         return orbManager;
     }
 
-    @Override
-    public OpenBusServicesRegistry onCreateOpenBusServicesRegistry(OpenBusServicesRegistry openBusServicesRegistry) {
-        log.info("Registrando componente {}", OPEN_BUS_SERVICES_REGISTRY);
-        beanFactory.registerSingleton(OPEN_BUS_SERVICES_REGISTRY, openBusServicesRegistry);
-        return openBusServicesRegistry;
+    private void registerOpenBusRemoteApplication(RemoteApplication remoteApplication) {
+        log.info("Registrando componente {}", OPEN_BUS_REMOTE_APPLICATION);
+        beanFactory.registerSingleton(OPEN_BUS_REMOTE_APPLICATION, remoteApplication);
     }
 
     @Override

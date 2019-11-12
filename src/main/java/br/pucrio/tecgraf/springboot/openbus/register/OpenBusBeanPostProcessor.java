@@ -66,10 +66,10 @@ public class OpenBusBeanPostProcessor implements BeanPostProcessor, BeanFactoryA
             String name = openBusServiceAnnotation.name();
             String id = openBusServiceAnnotation.id();
             // Registra a faceta
-            ServiceOffer serviceOffer = openBusApplicationInstance.addService(servant, name, id);
+            RemoteService remoteService = openBusApplicationInstance.addService(servant, name, id);
             // Registra um bean com o nome do serviço para a faceta
-            log.info("(1) Bean = {}, {}", beanName, serviceOffer);
-            configurableListableBeanFactory.registerSingleton(name, serviceOffer);
+            log.info("(1) Bean = {}, {}", beanName, remoteService);
+            configurableListableBeanFactory.registerSingleton(name, remoteService);
         }
     }
 

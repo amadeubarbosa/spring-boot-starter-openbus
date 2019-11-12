@@ -1,17 +1,22 @@
 package br.pucrio.tecgraf.springboot.openbus.management;
 
-import br.pucrio.tecgraf.springboot.openbus.register.ServiceOffer;
+import br.pucrio.tecgraf.springboot.openbus.register.RemoteService;
+import scs.core.exception.SCSException;
 
 import java.util.Set;
 
 public interface OpenBusServicesRegistry {
-    void addService(ServiceOffer serviceOffer);
 
-    void removeService(ServiceOffer serviceOffer);
+    void addService(RemoteService remoteService) throws SCSException;
 
-    void registerService(ServiceOffer serviceOffer);
+    void removeService(RemoteService remoteService);
 
-    Set<ServiceOffer> availableOffers();
+    void registerService(RemoteService remoteService);
 
-    Set<ServiceOffer> registeredOffers();
+    Set<RemoteService> availableOffers();
+
+    Set<RemoteService> registeredOffers();
+
+    void unregisterServices();
+
 }
