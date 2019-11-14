@@ -18,12 +18,15 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Conditional;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Primary;
+import org.springframework.core.Ordered;
 import org.springframework.core.annotation.AnnotationUtils;
+import org.springframework.core.annotation.Order;
 
 import java.util.Map;
 
 @Configuration(proxyBeanMethods = false)
-@Conditional(OpenBusAutoConfiguration.OpenbusConditional.class)
+//@Conditional(OpenBusAutoConfiguration.OpenbusConditional.class)
+@Order(Ordered.HIGHEST_PRECEDENCE)
 @EnableConfigurationProperties({OpenBusPropertiesConnection.class, OpenBusPropertiesOrb.class, OpenBusPropertiesServices.class})
 public class OpenBusAutoConfiguration implements BeanFactoryAware {
 
