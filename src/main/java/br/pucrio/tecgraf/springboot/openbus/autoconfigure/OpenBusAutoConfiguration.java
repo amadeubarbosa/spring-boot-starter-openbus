@@ -17,11 +17,14 @@ import org.springframework.context.ApplicationContext;
 import org.springframework.context.ApplicationContextAware;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.core.Ordered;
 import org.springframework.core.annotation.AnnotationUtils;
+import org.springframework.core.annotation.Order;
 
 import java.util.Map;
 
 @Configuration(proxyBeanMethods = false)
+@Order(Ordered.LOWEST_PRECEDENCE - 10)
 @EnableConfigurationProperties({OpenBusPropertiesConnection.class, OpenBusPropertiesOrb.class, OpenBusPropertiesServices.class})
 public class OpenBusAutoConfiguration implements BeanFactoryAware {
 
