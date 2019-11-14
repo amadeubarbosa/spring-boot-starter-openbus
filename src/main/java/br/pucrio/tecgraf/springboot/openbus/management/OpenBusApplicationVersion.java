@@ -92,6 +92,9 @@ public class OpenBusApplicationVersion {
     }
 
     public boolean applyVersion(byte major, byte minor, byte patch) {
+        if (major == -1 || minor == -1 || patch == -1) {
+            return verified;
+        }
         this.major = major;
         this.minor = minor;
         this.patch = patch;

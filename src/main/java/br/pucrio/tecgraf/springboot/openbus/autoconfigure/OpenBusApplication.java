@@ -12,10 +12,10 @@ public @interface OpenBusApplication {
 
     String version() default "";
 
-    byte major() default 0;
+    byte major() default -1;
 
-    byte minor() default 0;
+    byte minor() default -1;
 
-    byte patch() default 0;
+    byte patch() default -1;
 
 }
