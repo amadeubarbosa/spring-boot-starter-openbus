@@ -152,12 +152,10 @@ public class OpenBusApplicationVersion {
         public OpenBusApplicationVersion version() {
             if (!instance.verified) {
                 log.warn("Não foi detectada nenhuma versão disponível (utilize a anotação {} para modificar a " +
-                         "versão ou crie a entrada {} no arquivo de manifesto", OpenBusApplication.class.getName(),
+                         "versão ou crie a entrada {} no arquivo de manifesto)", OpenBusApplication.class.getName(),
                          OPEN_BUS_COMPONENT_VERSION);
             }
-            else {
-                log.info("Versão assumida do componente: {}", instance.toString());
-            }
+            log.info("Versão assumida do componente: {}", instance.toString());
             return instance;
         }
 
