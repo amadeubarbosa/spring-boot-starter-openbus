@@ -9,4 +9,8 @@ interface ServiceOperations2 {
     string greetsTwo();
 };
 
+interface ServiceOperations3 {
+    string greetsThree();
+};
+
 }; }; }; }; };

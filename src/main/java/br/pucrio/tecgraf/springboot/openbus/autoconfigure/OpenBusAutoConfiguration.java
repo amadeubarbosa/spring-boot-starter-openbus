@@ -92,6 +92,12 @@ public class OpenBusAutoConfiguration implements BeanFactoryAware {
     }
 
     @Bean
+    public OpenBusBeanPostProcessor producesOpenBusBeanPostProcessor(ConfigurableListableBeanFactory configurableListableBeanFactory,
+                                                                     OpenBusApplicationInstance openBusApplicationInstance) {
+        return new OpenBusBeanPostProcessor(configurableListableBeanFactory, openBusApplicationInstance);
+    }
+
+    @Bean
     @Primary
     public OpenBusApplicationInstance registerOpenBusApplicationInstance(ApplicationContext applicationContext)
             throws Exception {
@@ -108,7 +114,7 @@ public class OpenBusAutoConfiguration implements BeanFactoryAware {
         registerComponent(openBusConfiguration);
 
         // Registra o processador de beans
-        listableBeanFactory.registerSingleton("openBusBeanPostProcessor", OpenBusBeanPostProcessor.class);
+        //listableBeanFactory.registerSingleton("openBusBeanPostProcessor", OpenBusBeanPostProcessor.class);
         // Cria o builder de instâncias openbus
         OpenBusApplicationInstanceSpring openBusApplicationInstance = new OpenBusApplicationInstanceSpring(
                 componentName, major, minor, patch,
