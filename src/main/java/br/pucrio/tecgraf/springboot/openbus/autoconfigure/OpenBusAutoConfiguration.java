@@ -26,7 +26,7 @@ import java.util.Map;
 public class OpenBusAutoConfiguration implements BeanFactoryAware {
 
     static class OpenbusConditional extends AnyNestedCondition {
-        OpenbusConditional(ConfigurationPhase configurationPhase) {
+        OpenbusConditional() {
             super(ConfigurationPhase.PARSE_CONFIGURATION);
         }
     }
