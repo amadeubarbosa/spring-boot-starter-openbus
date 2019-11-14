@@ -17,6 +17,7 @@ import org.springframework.context.ApplicationContext;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Conditional;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.context.annotation.Primary;
 import org.springframework.core.annotation.AnnotationUtils;
 
 import java.util.Map;
@@ -89,6 +90,7 @@ public class OpenBusAutoConfiguration implements BeanFactoryAware {
     }
 
     @Bean
+    @Primary
     public OpenBusApplicationInstance registerOpenBusApplicationInstance(ApplicationContext applicationContext)
             throws Exception {
 
