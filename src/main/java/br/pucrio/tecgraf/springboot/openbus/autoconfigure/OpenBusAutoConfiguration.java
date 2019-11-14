@@ -7,26 +7,30 @@ import br.pucrio.tecgraf.springboot.openbus.properties.OpenBusPropertiesOrb;
 import br.pucrio.tecgraf.springboot.openbus.properties.OpenBusPropertiesServices;
 import br.pucrio.tecgraf.springboot.openbus.register.OpenBusBeanPostProcessor;
 import org.springframework.beans.BeansException;
-import org.springframework.beans.factory.BeanCreationException;
 import org.springframework.beans.factory.BeanFactory;
 import org.springframework.beans.factory.BeanFactoryAware;
-import org.springframework.beans.factory.ListableBeanFactory;
 import org.springframework.beans.factory.config.ConfigurableListableBeanFactory;
+import org.springframework.boot.autoconfigure.condition.AnyNestedCondition;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.context.ApplicationContext;
-import org.springframework.context.ApplicationContextAware;
 import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.Conditional;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.core.Ordered;
 import org.springframework.core.annotation.AnnotationUtils;
-import org.springframework.core.annotation.Order;
 
 import java.util.Map;
 
 @Configuration(proxyBeanMethods = false)
-@Order(Ordered.LOWEST_PRECEDENCE - 10)
+@Conditional(OpenBusAutoConfiguration.OpenbusConditional.class)
 @EnableConfigurationProperties({OpenBusPropertiesConnection.class, OpenBusPropertiesOrb.class, OpenBusPropertiesServices.class})
 public class OpenBusAutoConfiguration implements BeanFactoryAware {
+
+    static class OpenbusConditional extends AnyNestedCondition {
+        OpenbusConditional(ConfigurationPhase configurationPhase) {
+            super(ConfigurationPhase.PARSE_CONFIGURATION);
+        }
+    }
+
 
     private ApplicationContext applicationContext;
 
