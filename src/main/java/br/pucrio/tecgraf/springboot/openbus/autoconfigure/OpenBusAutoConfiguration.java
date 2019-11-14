@@ -5,11 +5,13 @@ import br.pucrio.tecgraf.springboot.openbus.properties.OpenBusConfiguration;
 import br.pucrio.tecgraf.springboot.openbus.properties.OpenBusPropertiesConnection;
 import br.pucrio.tecgraf.springboot.openbus.properties.OpenBusPropertiesOrb;
 import br.pucrio.tecgraf.springboot.openbus.properties.OpenBusPropertiesServices;
+import br.pucrio.tecgraf.springboot.openbus.register.OpenBusBeanPostProcessor;
 import org.springframework.beans.BeansException;
 import org.springframework.beans.factory.BeanCreationException;
 import org.springframework.beans.factory.BeanFactory;
 import org.springframework.beans.factory.BeanFactoryAware;
 import org.springframework.beans.factory.ListableBeanFactory;
+import org.springframework.beans.factory.config.ConfigurableListableBeanFactory;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.ApplicationContextAware;
@@ -87,6 +89,8 @@ public class OpenBusAutoConfiguration implements BeanFactoryAware {
         OpenBusConfiguration openBusConfiguration = applicationContext.getBean(OpenBusConfiguration.class);
         OpenBusPropertiesConnection openBusPropertiesConnection = applicationContext.getBean(OpenBusPropertiesConnection.class);
         OpenBusPropertiesServices openBusPropertiesServices = applicationContext.getBean(OpenBusPropertiesServices.class);
+        // Registra o processador de beans
+        listableBeanFactory.registerSingleton("openBusBeanPostProcessor", OpenBusBeanPostProcessor.class);
         // Cria o builder de instâncias openbus
         OpenBusApplicationInstanceSpring openBusApplicationInstance = new OpenBusApplicationInstanceSpring(
                 componentName, major, minor, patch,
@@ -97,11 +101,11 @@ public class OpenBusAutoConfiguration implements BeanFactoryAware {
         return openBusApplicationInstance.instantiate();
     }
 
-    private ListableBeanFactory listableBeanFactory;
+    private ConfigurableListableBeanFactory listableBeanFactory;
 
     @Override
     public void setBeanFactory(BeanFactory beanFactory) throws BeansException {
-        this.listableBeanFactory = (ListableBeanFactory) beanFactory;
+        this.listableBeanFactory = (ConfigurableListableBeanFactory) beanFactory;
     }
 
 }

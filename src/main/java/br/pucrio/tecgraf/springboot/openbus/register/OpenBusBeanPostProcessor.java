@@ -12,7 +12,6 @@ import org.springframework.beans.factory.BeanFactoryAware;
 import org.springframework.beans.factory.config.BeanPostProcessor;
 import org.springframework.beans.factory.config.ConfigurableListableBeanFactory;
 import org.springframework.core.annotation.AnnotationUtils;
-import org.springframework.stereotype.Component;
 import org.springframework.util.ClassUtils;
 
 import scs.core.exception.SCSException;
@@ -20,7 +19,6 @@ import scs.core.exception.SCSException;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
 
-@Component
 public class OpenBusBeanPostProcessor implements BeanPostProcessor, BeanFactoryAware {
 
     private Logger log = LoggerFactory.getLogger(OpenBusBeanPostProcessor.class);
