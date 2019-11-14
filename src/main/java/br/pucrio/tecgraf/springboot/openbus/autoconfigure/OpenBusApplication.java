@@ -10,6 +10,8 @@ public @interface OpenBusApplication {
 
     String value();
 
+    String version();
+
     byte major() default 0;
 
     byte minor() default 0;

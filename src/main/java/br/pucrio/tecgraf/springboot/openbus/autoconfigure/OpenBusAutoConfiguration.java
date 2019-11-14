@@ -1,6 +1,7 @@
 package br.pucrio.tecgraf.springboot.openbus.autoconfigure;
 
 import br.pucrio.tecgraf.springboot.openbus.management.OpenBusApplicationInstance;
+import br.pucrio.tecgraf.springboot.openbus.management.OpenBusApplicationVersion;
 import br.pucrio.tecgraf.springboot.openbus.properties.OpenBusConfiguration;
 import br.pucrio.tecgraf.springboot.openbus.properties.OpenBusPropertiesConnection;
 import br.pucrio.tecgraf.springboot.openbus.properties.OpenBusPropertiesOrb;
@@ -53,22 +54,22 @@ public class OpenBusAutoConfiguration implements BeanFactoryAware {
      * 3) Do manifesto
      * Caso não seja encontrado nesses 3 lugares, o valor padrão será 0.0.0
      */
-    private void registerComponent() {
+    private void registerComponent(OpenBusConfiguration openBusConfiguration) {
         createAnnotationInstance();
         registerName();
-        registerVersion();
+        registerVersion(openBusConfiguration);
     }
 
-    private void registerVersion() {
-        this.major = openBusApplication.major();
-        this.minor = openBusApplication.minor();
-        this.patch = openBusApplication.patch();
-        if (this.major == 0) {
-            // TODO Tenta ler do application.properties
-            if (this.major == 0) {
-                // TODO Tenta ler do manifesto
-            }
-        }
+    private void registerVersion(OpenBusConfiguration openBusConfiguration) {
+        OpenBusApplicationVersion version = new OpenBusApplicationVersion.Builder()
+                .applyVersion(openBusApplication.major(), openBusApplication.minor(), openBusApplication.patch())
+                .applyVersion(openBusConfiguration.getComponentVersion())
+                .readManifest()
+                .version();
+
+        this.major = version.getMajor();
+        this.minor = version.getMinor();
+        this.patch = version.getPatch();
     }
 
     private void createAnnotationInstance() {
@@ -97,14 +98,15 @@ public class OpenBusAutoConfiguration implements BeanFactoryAware {
 
         this.applicationContext = applicationContext;
 
-        // Registra os detalhes do componente
-        registerComponent();
-
         // Obtém os beans de configuração
         OpenBusPropertiesOrb openBusPropertiesOrb = applicationContext.getBean(OpenBusPropertiesOrb.class);
         OpenBusConfiguration openBusConfiguration = applicationContext.getBean(OpenBusConfiguration.class);
         OpenBusPropertiesConnection openBusPropertiesConnection = applicationContext.getBean(OpenBusPropertiesConnection.class);
         OpenBusPropertiesServices openBusPropertiesServices = applicationContext.getBean(OpenBusPropertiesServices.class);
+
+        // Registra os detalhes do componente
+        registerComponent(openBusConfiguration);
+
         // Registra o processador de beans
         listableBeanFactory.registerSingleton("openBusBeanPostProcessor", OpenBusBeanPostProcessor.class);
         // Cria o builder de instâncias openbus

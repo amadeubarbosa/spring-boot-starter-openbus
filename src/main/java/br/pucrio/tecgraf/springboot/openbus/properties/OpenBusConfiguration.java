@@ -23,6 +23,8 @@ public class OpenBusConfiguration {
     @NotNull(message = "Informe a chave privada que dá acesso para que o serviço seja registrado no openbus")
     private PrivateKey privateKey;
 
+    private String componentVersion;
+
     public String getName() {
         return name;
     }
@@ -63,9 +65,17 @@ public class OpenBusConfiguration {
         this.privateKey = privateKey;
     }
 
+    public String getComponentVersion() {
+        return componentVersion;
+    }
+
+    public void setComponentVersion(String componentVersion) {
+        this.componentVersion = componentVersion;
+    }
+
     @Override
     public String toString() {
-        return "OpenBusProperties{" +
+        return "OpenBusConfiguration{" +
                 "address='" + address + '\'' +
                 ", port=" + port +
                 ", retryInterval=" + retryInterval +
