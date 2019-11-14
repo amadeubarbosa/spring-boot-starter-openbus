@@ -6,6 +6,7 @@ import br.pucrio.tecgraf.springboot.openbus.properties.OpenBusPropertiesConnecti
 import br.pucrio.tecgraf.springboot.openbus.properties.OpenBusPropertiesOrb;
 import br.pucrio.tecgraf.springboot.openbus.properties.OpenBusPropertiesServices;
 import br.pucrio.tecgraf.springboot.openbus.register.OpenBusBeanPostProcessor;
+import org.omg.CORBA.ORB;
 import org.springframework.beans.BeansException;
 import org.springframework.beans.factory.BeanFactory;
 import org.springframework.beans.factory.BeanFactoryAware;
@@ -80,6 +81,11 @@ public class OpenBusAutoConfiguration implements BeanFactoryAware {
 
     private void registerName() {
         this.componentName = openBusApplication.value();
+    }
+
+    @Bean
+    public ORB autoConfigureORBProduces(OpenBusApplicationInstance instance) {
+        return instance.getOrb();
     }
 
     @Bean
