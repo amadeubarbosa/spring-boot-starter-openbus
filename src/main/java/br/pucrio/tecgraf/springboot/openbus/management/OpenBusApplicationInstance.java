@@ -106,7 +106,12 @@ public class OpenBusApplicationInstance {
 
     private void createComponentContext() throws SCSException {
         // A especificação da plataforma é uma concatenação de "java" + a versão da propriedade da versão de java
-        String platformSpecification = String.format("java-%s", System.getProperty("java.specification.version"));
+        String platformSpecification = String.format("%s (%s) - %s %s [%s]",
+                System.getProperty("java.vm.name"),
+                System.getProperty("java.vm.vendor"),
+                System.getProperty("java.runtime.version"),
+                System.getProperty("java.vm.version"),
+                System.getProperty("java.vm.info"));
         componentContext = new ComponentContext(orb, poa, new ComponentId(
                 name, major, minor, patch, platformSpecification));
     }

@@ -9,10 +9,12 @@ import org.springframework.beans.BeansException;
 import org.springframework.beans.factory.BeanCreationException;
 import org.springframework.beans.factory.BeanFactory;
 import org.springframework.beans.factory.BeanFactoryAware;
+import org.springframework.beans.factory.annotation.AnnotatedBeanDefinition;
 import org.springframework.beans.factory.config.BeanDefinition;
 import org.springframework.beans.factory.config.BeanPostProcessor;
 import org.springframework.beans.factory.config.ConfigurableListableBeanFactory;
 import org.springframework.core.annotation.AnnotationUtils;
+import org.springframework.core.type.MethodMetadata;
 import org.springframework.util.ClassUtils;
 
 import scs.core.exception.SCSException;
@@ -56,8 +58,12 @@ public class OpenBusBeanPostProcessor implements BeanPostProcessor, BeanFactoryA
         return (Servant)objectServant;
     }
 
-    private void scanOpenBusServiceAnnotation(Object bean, String beanName) throws SCSException {
-        OpenBusService openBusServiceAnnotation = AnnotationUtils.findAnnotation(bean.getClass(), OpenBusService.class);
+    private OpenBusService scanOpenBusServiceAnnotation(Object bean, String beanName) throws SCSException {
+        return AnnotationUtils.findAnnotation(bean.getClass(), OpenBusService.class);
+
+    }
+
+    private void registerFacet(OpenBusService openBusServiceAnnotation, Object bean, String beanName) throws SCSException {
         if (openBusServiceAnnotation != null) {
             // Verifica se é um servant
             Servant servant = createServant(bean, openBusServiceAnnotation.servant());
@@ -77,12 +83,28 @@ public class OpenBusBeanPostProcessor implements BeanPostProcessor, BeanFactoryA
         try {
             // Registra os beans produzidos
             BeanDefinition beanDefinition = configurableListableBeanFactory.getBeanDefinition(beanName);
+            OpenBusService openBusService;
+            // Analisa de onde é proveniente a anotação: de um @Bean ou de um serviço direto
+            if (beanDefinition instanceof AnnotatedBeanDefinition) {
+                openBusService = scanOpenBusServiceAnnotation((AnnotatedBeanDefinition)beanDefinition);
+            }
+            else {
+                openBusService = scanOpenBusServiceAnnotation(bean, beanName);
+            }
             // Registra os beans com anotação
-            scanOpenBusServiceAnnotation(bean, beanName);
+            registerFacet(openBusService, bean, beanName);
         } catch (SCSException e) {
             throw new BeanCreationException("Erro ao criar componente openBus para o bean " + beanName, e);
         }
         return bean;
+    }
+
+    private OpenBusService scanOpenBusServiceAnnotation(AnnotatedBeanDefinition beanDefinition) {
+        MethodMetadata methodMetadata = beanDefinition.getFactoryMethodMetadata();
+        if (methodMetadata != null && methodMetadata.getAnnotations().get(OpenBusService.class).isPresent()) {
+            return methodMetadata.getAnnotations().get(OpenBusService.class).synthesize();
+        }
+        return null;
     }
 
     @Override

@@ -8,6 +8,8 @@ import br.pucrio.tecgraf.springboot.openbus.properties.OpenBusPropertiesOrb;
 import br.pucrio.tecgraf.springboot.openbus.properties.OpenBusPropertiesServices;
 import br.pucrio.tecgraf.springboot.openbus.register.OpenBusBeanPostProcessor;
 import org.omg.CORBA.ORB;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.BeansException;
 import org.springframework.beans.factory.BeanFactory;
 import org.springframework.beans.factory.BeanFactoryAware;
@@ -15,26 +17,30 @@ import org.springframework.beans.factory.config.ConfigurableListableBeanFactory;
 import org.springframework.boot.autoconfigure.condition.AnyNestedCondition;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.context.ApplicationContext;
+import org.springframework.context.EmbeddedValueResolverAware;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Primary;
 import org.springframework.core.annotation.AnnotationUtils;
+import org.springframework.util.StringValueResolver;
 
 import java.util.Map;
 
 @Configuration(proxyBeanMethods = false)
 @ComponentScan("br.pucrio.tecgraf.springboot")
 @EnableConfigurationProperties({OpenBusPropertiesConnection.class, OpenBusPropertiesOrb.class, OpenBusPropertiesServices.class})
-public class OpenBusAutoConfiguration implements BeanFactoryAware {
+public class OpenBusAutoConfiguration implements BeanFactoryAware, EmbeddedValueResolverAware {
+
+    private Logger log = LoggerFactory.getLogger(OpenBusAutoConfiguration.class);
 
     // TODO Fazer o @Conditional (somente eletivo se as condições forem realizadas)
     static class OpenbusConditional extends AnyNestedCondition {
+
         OpenbusConditional() {
             super(ConfigurationPhase.PARSE_CONFIGURATION);
         }
     }
-
 
     private ApplicationContext applicationContext;
 
@@ -46,6 +52,7 @@ public class OpenBusAutoConfiguration implements BeanFactoryAware {
 
     private OpenBusApplication openBusApplication;
 
+    private StringValueResolver resolver;
 
     /**
      * A versão pode vir de 3 lugares (na ordem de prioridade)
@@ -56,7 +63,7 @@ public class OpenBusAutoConfiguration implements BeanFactoryAware {
      */
     private void registerComponent(OpenBusConfiguration openBusConfiguration) {
         createAnnotationInstance();
-        registerName();
+        registerName(openBusConfiguration);
         registerVersion(openBusConfiguration);
     }
 
@@ -82,8 +89,19 @@ public class OpenBusAutoConfiguration implements BeanFactoryAware {
         openBusApplication = AnnotationUtils.findAnnotation(openBusComponentClass, OpenBusApplication.class);
     }
 
-    private void registerName() {
-        this.componentName = openBusApplication.value();
+    private void registerName(OpenBusConfiguration openBusConfiguration) {
+        String name = null;
+        // 1. Tenta obter o nome da anotação
+        if (openBusApplication.value() != null) name = openBusApplication.value();
+        // 2. Tenta obter o nome do arquivo de configuração
+        else if (openBusConfiguration.getName() != null) name = openBusConfiguration.getName();
+        // Caso o nome permaneça nulo, informa o usuário que ele deve fornecer um nome válido
+        if (name == null) {
+            throw new RuntimeException("Um nome de aplicação deve ser declarado ou na anotação " +
+                    OpenBusApplication.class + " ou na propriedade 'openbus.name' para ser registrado");
+        }
+        this.componentName = resolver.resolveStringValue(name);
+        log.info("Nome da aplicação resolvida: {}", this.componentName);
     }
 
     @Bean
@@ -130,6 +148,11 @@ public class OpenBusAutoConfiguration implements BeanFactoryAware {
     @Override
     public void setBeanFactory(BeanFactory beanFactory) throws BeansException {
         this.listableBeanFactory = (ConfigurableListableBeanFactory) beanFactory;
+    }
+
+    @Override
+    public void setEmbeddedValueResolver(StringValueResolver resolver) {
+        this.resolver = resolver;
     }
 
 }
