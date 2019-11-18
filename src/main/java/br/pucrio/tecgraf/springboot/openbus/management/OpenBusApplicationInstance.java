@@ -117,13 +117,14 @@ public class OpenBusApplicationInstance {
     }
 
     private void createRemoteApplication() {
-        this.remoteApplication = new RemoteApplicationDefault(name, componentContext, mountServiceProperties("application"));
+        this.remoteApplication = new RemoteApplicationDefault(name, componentContext, mountApplicationProperties());
     }
 
-    private ServiceProperty[] mountServiceProperties(String name) {
+    private ServiceProperty[] mountApplicationProperties() {
         Map<String, String> serviceProperties = openBusPropertiesServices.getProperties();
         return serviceProperties.keySet().stream()
-                .filter(item -> item.equals(name) || item.equals("default"))
+                // TODO Filtrar propriedades por serviço
+                //.filter(item -> item.equals(name) || item.equals("default"))
                 .map(item -> new ServiceProperty(item, serviceProperties.get(item)))
                 .collect(Collectors.toList())
                 .toArray(new ServiceProperty[]{});
