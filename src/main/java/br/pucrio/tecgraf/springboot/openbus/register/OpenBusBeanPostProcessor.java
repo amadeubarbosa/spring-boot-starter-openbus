@@ -9,6 +9,7 @@ import org.springframework.beans.BeansException;
 import org.springframework.beans.factory.BeanCreationException;
 import org.springframework.beans.factory.BeanFactory;
 import org.springframework.beans.factory.BeanFactoryAware;
+import org.springframework.beans.factory.config.BeanDefinition;
 import org.springframework.beans.factory.config.BeanPostProcessor;
 import org.springframework.beans.factory.config.ConfigurableListableBeanFactory;
 import org.springframework.core.annotation.AnnotationUtils;
@@ -74,6 +75,9 @@ public class OpenBusBeanPostProcessor implements BeanPostProcessor, BeanFactoryA
     @Override
     public Object postProcessBeforeInitialization(Object bean, String beanName) throws BeansException {
         try {
+            // Registra os beans produzidos
+            BeanDefinition beanDefinition = configurableListableBeanFactory.getBeanDefinition(beanName);
+            // Registra os beans com anotação
             scanOpenBusServiceAnnotation(bean, beanName);
         } catch (SCSException e) {
             throw new BeanCreationException("Erro ao criar componente openBus para o bean " + beanName, e);
