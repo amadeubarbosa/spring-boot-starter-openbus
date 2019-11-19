@@ -7,10 +7,10 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
 //@EnableConfigurationProperties
 @OpenBusApplication(value = "springboot-openbus-teste", major = 1, minor = 0, patch = 0)
 @SpringBootApplication
-public class Main {
+public class MainServer {
 
     public static void main(String[] args) {
-        SpringApplication.run(Main.class, args);
+        SpringApplication.run(MainServer.class, args);
     }
 
 }

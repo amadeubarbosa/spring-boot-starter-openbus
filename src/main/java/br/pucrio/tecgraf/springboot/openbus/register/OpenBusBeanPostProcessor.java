@@ -83,16 +83,20 @@ public class OpenBusBeanPostProcessor implements BeanPostProcessor, BeanFactoryA
         try {
             // Registra os beans produzidos
             BeanDefinition beanDefinition = configurableListableBeanFactory.getBeanDefinition(beanName);
-            OpenBusService openBusService;
+            OpenBusService openBusService = null;
             // Analisa de onde é proveniente a anotação: de um @Bean ou de um serviço direto
             if (beanDefinition instanceof AnnotatedBeanDefinition) {
-                openBusService = scanOpenBusServiceAnnotation((AnnotatedBeanDefinition)beanDefinition);
-            }
-            else {
-                openBusService = scanOpenBusServiceAnnotation(bean, beanName);
+                openBusService = scanOpenBusServiceAnnotation(((AnnotatedBeanDefinition)beanDefinition));
+                if (openBusService == null) {
+                    openBusService = scanOpenBusServiceAnnotation(bean, beanName);
+                    if (openBusService != null) log.info("Bean {} anotado diretamente", beanName);
+                }
+                else {
+                    log.info("Bean {} produzido por configuração", beanName);
+                }
             }
             // Registra os beans com anotação
-            registerFacet(openBusService, bean, beanName);
+            if (openBusService != null) registerFacet(openBusService, bean, beanName);
         } catch (SCSException e) {
             throw new BeanCreationException("Erro ao criar componente openBus para o bean " + beanName, e);
         }

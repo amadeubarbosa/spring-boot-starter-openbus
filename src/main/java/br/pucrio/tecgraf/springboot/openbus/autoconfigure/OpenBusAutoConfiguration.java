@@ -18,16 +18,14 @@ import org.springframework.boot.autoconfigure.condition.AnyNestedCondition;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.EmbeddedValueResolverAware;
-import org.springframework.context.annotation.Bean;
-import org.springframework.context.annotation.ComponentScan;
-import org.springframework.context.annotation.Configuration;
-import org.springframework.context.annotation.Primary;
+import org.springframework.context.annotation.*;
 import org.springframework.core.annotation.AnnotationUtils;
 import org.springframework.util.StringValueResolver;
 
 import java.util.Map;
 
-@Configuration(proxyBeanMethods = false)
+@Configuration(proxyBeanMethods = true)
+@EnableAspectJAutoProxy(proxyTargetClass = true)
 @ComponentScan("br.pucrio.tecgraf.springboot")
 @EnableConfigurationProperties({OpenBusPropertiesConnection.class, OpenBusPropertiesOrb.class, OpenBusPropertiesServices.class})
 public class OpenBusAutoConfiguration implements BeanFactoryAware, EmbeddedValueResolverAware {
