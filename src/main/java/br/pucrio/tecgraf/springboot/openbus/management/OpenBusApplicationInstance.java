@@ -82,6 +82,8 @@ public class OpenBusApplicationInstance {
     public void stop() {
         // Sinaliza parada para o registro
         openBusRegistrator.stop();
+        // Para o orb
+        orbManager.shutdownOrb();
     }
 
     public RemoteApplication getRemoteApplication() {

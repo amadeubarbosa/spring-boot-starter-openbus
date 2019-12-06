@@ -5,6 +5,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.BeanFactory;
 import org.springframework.context.event.ContextClosedEvent;
 import org.springframework.context.event.ContextRefreshedEvent;
+import org.springframework.context.event.ContextStoppedEvent;
 import org.springframework.context.event.EventListener;
 import org.springframework.stereotype.Component;
 import scs.core.exception.SCSException;
@@ -22,13 +23,22 @@ public class OpenBusApplicationListener {
 	}
 
 	@EventListener
-	public void onStart(ContextRefreshedEvent event) throws SCSException {
+	public void onRefresh(ContextRefreshedEvent event) throws SCSException {
 		// Inicia a instância do componente
+		logger.info("Evento: atualizando contexto");
 		openBusApplicationInstance.start();
 	}
 
 	@EventListener
-	public void onClose(ContextClosedEvent event) {
+	public void onClose(ContextStoppedEvent event) {
+		logger.info("Evento: fechamento de contexto");
+		// Sinaliza parada para o registro
+		openBusApplicationInstance.stop();
+	}
+
+	@EventListener
+	public void onStop(ContextClosedEvent event) {
+		logger.info("Evento: parando aplicação");
 		// Sinaliza parada para o registro
 		openBusApplicationInstance.stop();
 	}

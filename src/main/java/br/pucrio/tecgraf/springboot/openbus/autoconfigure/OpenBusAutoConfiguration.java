@@ -19,7 +19,14 @@ import org.springframework.boot.context.properties.EnableConfigurationProperties
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.EmbeddedValueResolverAware;
 import org.springframework.context.annotation.*;
+import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.ComponentScan;
+import org.springframework.context.annotation.Configuration;
+import org.springframework.context.annotation.Primary;
+import org.springframework.core.Ordered;
+>>>>>>> Thread de shutdown
 import org.springframework.core.annotation.AnnotationUtils;
+import org.springframework.core.annotation.Order;
 import org.springframework.util.StringValueResolver;
 
 import java.util.Map;
@@ -108,6 +115,7 @@ public class OpenBusAutoConfiguration implements BeanFactoryAware, EmbeddedValue
     }
 
     @Bean
+    @Order(Ordered.HIGHEST_PRECEDENCE + 1000)
     public OpenBusBeanPostProcessor producesOpenBusBeanPostProcessor(ConfigurableListableBeanFactory configurableListableBeanFactory,
                                                                      OpenBusApplicationInstance openBusApplicationInstance) {
         return new OpenBusBeanPostProcessor(configurableListableBeanFactory, openBusApplicationInstance);

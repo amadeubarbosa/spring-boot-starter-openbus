@@ -7,6 +7,8 @@ public interface ORBManager {
 
     void startOrb();
 
+    void shutdownOrb();
+
     void activatePOA();
 
     POA getPOA();

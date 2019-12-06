@@ -28,6 +28,8 @@ public class ORBManagerDefault implements ORBManager {
     private ORB orb;
     private POA poa;
 
+    private Thread orbThread;
+
     public ORBManagerDefault(OpenBusPropertiesOrb openBusPropertiesOrb) {
         this.orbProperties = openBusPropertiesOrb.producer();
     }
@@ -57,9 +59,22 @@ public class ORBManagerDefault implements ORBManager {
         else {
             log.warn("O ORB sendo rodado não foi identificado: não serão informadas características locais do componente");
         }
-        orb.run();
+        orbThread = new Thread(() -> orb.run(), "Thread-Default-JacORB-Openbus");
+        orbThread.start();
     }
 
+    public void shutdownOrb() {
+        try {
+            log.info("Realizando shutdown no ORB");
+            if (orbThread != null) orbThread.interrupt();
+            if (orb != null) {
+                orb.shutdown(true);
+                orb.destroy();
+            }
+        } catch (Exception e) {
+            log.error("Erro ao se desconectar do servidor ORB", e);
+        }
+    }
 
     public ORB getORB() {
         if (orb == null) {
